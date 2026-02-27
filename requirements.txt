@@ -1,0 +1,4 @@
+nicegui
+pandas
+matplotlib
+textual
