@@ -12,6 +12,7 @@ import re
 import shlex
 from datetime import datetime
 from pathlib import Path
+from typing import Optional, Tuple, Union
 
 import pandas as pd
 
@@ -127,7 +128,7 @@ async def _run_git(*args: str) -> tuple[int, str, str]:
     return proc.returncode or 0, out.decode().strip(), err.decode().strip()
 
 
-class EditCellScreen(ModalScreen[str | None]):
+class EditCellScreen(ModalScreen[Optional[str]]):
     """Modal popup for editing a single cell value."""
 
     CSS = """
@@ -174,7 +175,7 @@ class EditCellScreen(ModalScreen[str | None]):
         self.dismiss(None)
 
 
-class AddColumnScreen(ModalScreen[tuple[str, str] | None]):
+class AddColumnScreen(ModalScreen[Optional[Tuple[str, str]]]):
     """Modal popup to add a new column with a name and optional default value."""
 
     CSS = """
@@ -245,7 +246,7 @@ class AddColumnScreen(ModalScreen[tuple[str, str] | None]):
         self.dismiss(None)
 
 
-class RemoveColumnScreen(ModalScreen[str | None]):
+class RemoveColumnScreen(ModalScreen[Optional[str]]):
     """Modal popup to pick a column to remove."""
 
     CSS = """
@@ -332,7 +333,7 @@ class RemoveColumnScreen(ModalScreen[str | None]):
         self.dismiss(None)
 
 
-class AddFileScreen(ModalScreen[tuple[str, str] | None]):
+class AddFileScreen(ModalScreen[Optional[Tuple[str, str]]]):
     """Modal popup to create a new CSV file."""
 
     CSS = """
@@ -405,7 +406,7 @@ class AddFileScreen(ModalScreen[tuple[str, str] | None]):
         self.dismiss(None)
 
 
-class AddRowScreen(ModalScreen[dict | None]):
+class AddRowScreen(ModalScreen[Optional[dict]]):
     """Modal popup with an input for every column to add a new row."""
 
     CSS = """
