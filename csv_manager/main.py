@@ -70,8 +70,11 @@ def _load_config(path: Path = DEFAULT_CONFIG_PATH) -> dict:
 
 def _save_config(cfg: dict, path: Path = DEFAULT_CONFIG_PATH) -> None:
     """Write *cfg* as JSON to *path*, creating parent dirs as needed."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(cfg, indent=2))
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(cfg, indent=2))
+    except OSError:
+        pass  # non-fatal: config is a convenience, not critical
 
 
 def filter_dataframe(df: pd.DataFrame, query: str) -> pd.DataFrame:
@@ -666,7 +669,10 @@ class CSVManagerApp(App):
                     event.stop()
 
     def on_mount(self) -> None:
-        self.data_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            self.data_dir.mkdir(parents=True, exist_ok=True)
+        except OSError as exc:
+            self._error(f"Cannot create data dir: {exc}")
         cfg = _load_config(self.config_path)
         if "theme" in cfg:
             self.theme = cfg["theme"]
