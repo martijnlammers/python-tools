@@ -44,12 +44,27 @@ def _safe_id(name: str) -> str:
     return re.sub(r"[^a-zA-Z0-9_-]", "-", name).strip("-") or "col"
 
 
+DEFAULT_CONFIG = {
+    "theme": "textual-dark",
+    "last_file": "",
+    "last_tab": "files",
+}
+
+
 def _load_config(path: Path = DEFAULT_CONFIG_PATH) -> dict:
-    """Read JSON config from *path*, returning {} on any failure."""
+    """Read JSON config from *path*, back-filling any missing keys with defaults."""
     try:
-        return json.loads(path.read_text())
+        cfg = json.loads(path.read_text())
     except Exception:
-        return {}
+        cfg = {}
+    updated = False
+    for key, value in DEFAULT_CONFIG.items():
+        if key not in cfg:
+            cfg[key] = value
+            updated = True
+    if updated:
+        _save_config(cfg, path)
+    return cfg
 
 
 def _save_config(cfg: dict, path: Path = DEFAULT_CONFIG_PATH) -> None:
