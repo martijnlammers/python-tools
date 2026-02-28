@@ -1031,11 +1031,6 @@ class CSVManagerApp(App):
     async def _git_sync_worker(self) -> None:
         data_path = str(self.data_dir.parent)  # data/ folder
         try:
-            rc, _, err = await _run_git("pull", "--rebase")
-            if rc != 0 and err:
-                self._error(f"Pull failed: {err}")
-                return
-
             await _run_git("add", data_path)
 
             rc, _, _ = await _run_git("diff", "--cached", "--quiet")
@@ -1044,7 +1039,8 @@ class CSVManagerApp(App):
                 self._refresh_file_list()
                 return
 
-            rc, _, err = await _run_git("commit", "-m", "csv-manager: sync data")
+            commit_message = f"csv-manager: sync data ({datetime.now().strftime('%Y-%m-%d %H:%M:%S')})"
+            rc, _, err = await _run_git("commit", "-m", commit_message)
             if rc != 0:
                 self._error(f"Commit failed: {err}")
                 return
