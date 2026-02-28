@@ -124,7 +124,7 @@ async def _run_git(*args: str) -> tuple[int, str, str]:
         stderr=asyncio.subprocess.PIPE,
     )
     out, err = await proc.communicate()
-    return proc.returncode, out.decode().strip(), err.decode().strip()
+    return proc.returncode or 0, out.decode().strip(), err.decode().strip()
 
 
 class EditCellScreen(ModalScreen[str | None]):
